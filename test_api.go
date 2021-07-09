@@ -60,7 +60,7 @@ func uploadTestAssets(configs ConfigsModel) (TestAssetsAndroid, error) {
 	}
 	if configs.TestType == testTypeRobo && configs.RoboScenarioFile != "" {
 		requestedAssets.RoboScript = TestAsset{
-			Filename: filepath.Base(configs.RoboScenarioFile),
+			Filename: filepath.Base(string(configs.RoboScenarioFile)),
 		}
 	}
 	for _, obbFile := range configs.ObbFiles {

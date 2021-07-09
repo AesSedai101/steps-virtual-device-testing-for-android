@@ -150,11 +150,20 @@ func (configs *ConfigsModel) validate() error {
 		}
 	}
 
-	configs.RoboScenarioFile = strings.TrimSpace(configs.RoboScenarioFile)
+	//configs.RoboScenarioFile = strings.TrimSpace(configs.RoboScenarioFile)
+	//if configs.TestType == testTypeRobo && configs.RoboScenarioFile != "" {
+	//	if _, err := os.Stat(configs.RoboScenarioFile); err != nil {
+	//		return fmt.Errorf("- RoboScenarioFile: failed to get file info, error: %s", err)
+	//	}
+	//}
+
 	if configs.TestType == testTypeRobo && configs.RoboScenarioFile != "" {
-		if _, err := os.Stat(configs.RoboScenarioFile); err != nil {
-			return fmt.Errorf("- RoboScenarioFile: failed to get file info, error: %s", err)
-		}
+	    pth := strings.TrimPrefix(string(c.RoboScenarioFile), "file://")
+        if exist, err := pathutil.IsPathExists(pth); err != nil {
+            return fmt.Errorf("failed to check if json key path exist at: %s, error: %s", pth, err)
+        } else if !exist {
+            return errors.New("json key path not exist at: " + pth)
+        }
 	}
 
 	var err error
