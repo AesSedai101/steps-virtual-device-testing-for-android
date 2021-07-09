@@ -9,6 +9,7 @@ import (
 
 	"github.com/bitrise-io/go-steputils/stepconf"
 	"github.com/bitrise-io/go-utils/log"
+	"github.com/bitrise-io/go-utils/pathutil"
 	testing "google.golang.org/api/testing/v1"
 )
 
@@ -158,11 +159,11 @@ func (configs *ConfigsModel) validate() error {
 	//}
 
 	if configs.TestType == testTypeRobo && configs.RoboScenarioFile != "" {
-	    pth := strings.TrimPrefix(string(c.RoboScenarioFile), "file://")
+	    pth := strings.TrimPrefix(string(configs.RoboScenarioFile), "file://")
         if exist, err := pathutil.IsPathExists(pth); err != nil {
             return fmt.Errorf("failed to check if json key path exist at: %s, error: %s", pth, err)
         } else if !exist {
-            return errors.New("json key path not exist at: " + pth)
+            return fmt.Errorf("json key path not exist at: " + pth)
         }
 	}
 
