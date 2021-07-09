@@ -7,6 +7,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/bitrise-io/go-steputils/stepconf"
 	"github.com/bitrise-io/go-utils/log"
 	testing "google.golang.org/api/testing/v1"
 )
@@ -51,7 +52,7 @@ type ConfigsModel struct {
 	// robo
 	RoboInitialActivity string `env:"robo_initial_activity"`
 	RoboDirectives      string `env:"robo_directives"`
-	RoboScenarioFile    string `env:"robo_scenario_file"`
+	RoboScenarioFile    stepconf.Secret `env:"robo_scenario_file"`
 	RoboMaxDepth        string `env:"robo_max_depth"`
 	RoboMaxSteps        string `env:"robo_max_steps"`
 
