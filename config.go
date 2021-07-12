@@ -159,16 +159,14 @@ func (configs *ConfigsModel) validate() error {
 	//}
 
 	if configs.TestType == testTypeRobo && configs.RoboScenarioFile != "" {
-		if !strings.HasPrefix(string(configs.RoboScenarioFile), "file://") {
-			return fmt.Errorf("- RoboScenarioFile: does not start with file:// %s", configs.RoboScenarioFile)
+		if strings.HasPrefix(string(configs.RoboScenarioFile), "file://") {
+			path := strings.TrimPrefix(string(configs.RoboScenarioFile), "file://")
+			if exist, err := pathutil.IsPathExists(path); err != nil {
+				return fmt.Errorf("- RoboScenarioFile: failed to check if file exists %s, error: %s", path, err)
+			} else if !exist {
+				return fmt.Errorf("- RoboScenarioFile: failed to get file info at path %s, error: %s", path, err)
+			}
 		}
-
-	    path := strings.TrimPrefix(string(configs.RoboScenarioFile), "file://")
-        if exist, err := pathutil.IsPathExists(path); err != nil {
-            return fmt.Errorf("- RoboScenarioFile: failed to check if file exists %s, error: %s", path, err)
-        } else if !exist {
-            return fmt.Errorf("- RoboScenarioFile: failed to get file info at path %s, error: %s", path, err)
-        }
 	}
 
 	var err error
