@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -350,4 +351,64 @@ func uploadFile(uploadURL string, archiveFilePath string) error {
 	}
 
 	return nil
+}
+
+func uploadRemoteFile(uploadURL string, downloadUrl string) error {
+
+	fileContents, err := downloadContent(downloadUrl)
+	if (err != nil) {
+		return fmt.Errorf("Failed to download file for upload (%s): %s", downloadUrl, err)
+	}
+
+	archFile := bytes.NewReader(fileContents)
+
+	fileInfo, err := archFile.Stat()
+	if err != nil {
+		return fmt.Errorf("Failed to get File Stats of the file (%s): %s", downloadUrl, err)
+	}
+	fileSize := fileInfo.Size()
+
+	req, err := http.NewRequest("PUT", uploadURL, archFile)
+	if err != nil {
+		return fmt.Errorf("Failed to create upload request: %s", err)
+	}
+
+	req.Header.Add("Content-Length", strconv.FormatInt(fileSize, 10))
+	req.ContentLength = fileSize
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("Failed to upload: %s", err)
+	}
+
+	_, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("Failed to read response: %s", err)
+	}
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("Failed to upload file, response code was: %d", resp.StatusCode)
+	}
+
+	return nil
+}
+
+// downloadContent opens the given url and returns the body of the response as a byte array.
+func downloadContent(downloadURL string) ([]byte, error) {
+	resp, err := http.Get(downloadURL)
+	if err != nil {
+		return []byte{}, fmt.Errorf("failed to download from (%s), error: %s", downloadURL, err)
+	}
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Warnf("failed to close (%s) body", downloadURL)
+		}
+	}()
+
+	contentBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, fmt.Errorf("failed to read received conent, error: %s", err)
+	}
+
+	return contentBytes, nil
 }
