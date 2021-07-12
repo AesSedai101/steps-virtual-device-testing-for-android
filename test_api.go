@@ -120,7 +120,7 @@ func uploadTestAssets(configs ConfigsModel) (TestAssetsAndroid, error) {
 	}
 
 	if configs.TestType == testTypeRobo && configs.RoboScenarioFile != "" {
-		if err := uploadFile(testAssets.RoboScript.UploadURL, string(configs.RoboScenarioFile); err != nil {
+		if err := uploadFile(testAssets.RoboScript.UploadURL, string(configs.RoboScenarioFile)); err != nil {
 			return TestAssetsAndroid{}, fmt.Errorf("failed to upload file(%s) to (%s), error: %s", configs.RoboScenarioFile, testAssets.RoboScript.UploadURL, err)
 		}
 	}
