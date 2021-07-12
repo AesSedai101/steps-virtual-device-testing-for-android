@@ -362,19 +362,10 @@ func uploadRemoteFile(uploadURL string, downloadUrl string) error {
 
 	archFile := bytes.NewReader(fileContents)
 
-	fileInfo, err := archFile.Stat()
-	if err != nil {
-		return fmt.Errorf("Failed to get File Stats of the file (%s): %s", downloadUrl, err)
-	}
-	fileSize := fileInfo.Size()
-
 	req, err := http.NewRequest("PUT", uploadURL, archFile)
 	if err != nil {
 		return fmt.Errorf("Failed to create upload request: %s", err)
 	}
-
-	req.Header.Add("Content-Length", strconv.FormatInt(fileSize, 10))
-	req.ContentLength = fileSize
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
