@@ -158,12 +158,28 @@ func (configs *ConfigsModel) validate() error {
 	//	}
 	//}
 
+	/*
+	func (c Configs) validateJSONKeyPath() error {
+		if !strings.HasPrefix(string(c.JSONKeyPath), "file://") {
+			return nil
+		}
+
+		pth := strings.TrimPrefix(string(c.JSONKeyPath), "file://")
+		if exist, err := pathutil.IsPathExists(pth); err != nil {
+			return fmt.Errorf("failed to check if json key path exist at: %s, error: %s", pth, err)
+		} else if !exist {
+			return errors.New("json key path not exist at: " + pth)
+		}
+		return nil
+	}
+	 */
+
 	if configs.TestType == testTypeRobo && configs.RoboScenarioFile != "" {
-	    pth := strings.TrimPrefix(string(configs.RoboScenarioFile), "file://")
-        if exist, err := pathutil.IsPathExists(pth); err != nil {
-            return fmt.Errorf("failed to check if json key path exist at: %s, error: %s", pth, err)
+	    path := strings.TrimPrefix(string(configs.RoboScenarioFile), "file://")
+        if exist, err := pathutil.IsPathExists(path); err != nil {
+            return fmt.Errorf("failed to check if json key path exist at: %s, error: %s", path, err)
         } else if !exist {
-            return fmt.Errorf("json key path not exist at: " + pth)
+            return fmt.Errorf("- RoboScenarioFile: failed to get file info at path %s, error: %s", path, err)
         }
 	}
 
